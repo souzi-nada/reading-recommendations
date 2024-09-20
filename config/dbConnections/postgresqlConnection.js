@@ -1,38 +1,42 @@
-import pkg from 'pg';
+import { Sequelize } from 'sequelize';
 import { pgDBConnection } from '../env/index.js';
 import logger from '../../common/logger/index.js';
 
-const { Pool } = pkg;
-
-export const initializeDB = async () => {
-  const pool = new Pool({
+export const sequelize = new Sequelize(
+  pgDBConnection.database,
+  pgDBConnection.user,
+  pgDBConnection.password,
+  {
     host: pgDBConnection.host,
     port: pgDBConnection.port,
-    password: pgDBConnection.password,
-    user: pgDBConnection.user,
-    database: pgDBConnection.database,
-    max: pgDBConnection.maxNumOfClients,
-    idleTimeoutMillis: pgDBConnection.idleTimeoutMillis
-  });
+    dialect: 'postgres',
+    pool: {
+      max: pgDBConnection.maxNumOfClients,
+      idle: pgDBConnection.idleTimeoutMillis
+    },
+    logging: msg => logger.info(msg)
+  }
+);
 
+export const initializeDB = async () => {
   try {
-    const client = await pool.connect();
-    logger.info('Connected to the PostgreSQL database Successfully!');
-    client.release();
+    await sequelize.authenticate();
+    logger.info(
+      'Connected to the PostgreSQL database successfully using Sequelize!'
+    );
+    sequelize.sync();
   } catch (error) {
     logger.error(
-      `Error while connecting to the PostgreSQL database ${JSON.stringify(error)}`
+      `Error while connecting to the PostgreSQL database: ${error.message}`
     );
   }
-
-  return pool;
 };
 
-export const closeDBConnection = async pool => {
+export const closeDBConnection = async () => {
   try {
-    await pool.end();
-    logger.info('PostgreSQL connection pool closed.');
+    await sequelize.close();
+    logger.info('PostgreSQL connection closed using Sequelize.');
   } catch (error) {
-    logger.error('Error while closing PostgreSQL connection pool!', error);
+    logger.error('Error while closing the PostgreSQL connection!', error);
   }
 };
