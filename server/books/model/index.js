@@ -27,7 +27,18 @@ const Book = sequelize.define(
   },
   {
     tableName: 'books',
-    timestamps: false
+    timestamps: false,
+    indexes: [
+      {
+        fields: [
+          {
+            attribute: 'uniqueReadPages',
+            order: 'DESC'
+          }
+        ],
+        name: 'idx_unique_read_pages_desc'
+      }
+    ]
   }
 );
 
