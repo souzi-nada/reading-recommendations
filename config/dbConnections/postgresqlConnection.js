@@ -1,22 +1,15 @@
 import { Sequelize } from 'sequelize';
-import { pgDBConnection } from '../env/index.js';
+import { pgDBConnection, DB_CONNECTION_STRING } from '../env/index.js';
 import logger from '../../common/logger/index.js';
 
-export const sequelize = new Sequelize(
-  pgDBConnection.database,
-  pgDBConnection.user,
-  pgDBConnection.password,
-  {
-    host: pgDBConnection.host,
-    port: pgDBConnection.port,
-    dialect: 'postgres',
-    pool: {
-      max: pgDBConnection.maxNumOfClients,
-      idle: pgDBConnection.idleTimeoutMillis
-    },
-    logging: msg => logger.info(msg)
-  }
-);
+export const sequelize = new Sequelize(DB_CONNECTION_STRING, {
+  dialect: 'postgres',
+  pool: {
+    max: pgDBConnection.maxNumOfClients,
+    idle: pgDBConnection.idleTimeoutMillis
+  },
+  logging: msg => logger.info(msg)
+});
 
 export const initializeDB = async () => {
   try {
