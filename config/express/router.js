@@ -6,6 +6,7 @@ import users from '../../server/users/index.js';
 const router = express.Router();
 
 router.use('/users', users);
+router.use('/books', books);
 router.use('/health', (req, res) => {
   const data = {
     uptime: process.uptime(),
