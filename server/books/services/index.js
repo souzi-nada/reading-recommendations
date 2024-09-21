@@ -41,7 +41,6 @@ class BookService {
       );
       return result[1][0].toJSON();
     } catch (error) {
-      console.log(error);
       logger.error(error);
       throw error;
     }
@@ -92,6 +91,8 @@ class BookService {
         start <= interval[1]
       ) {
         if (isNewIntervalEnd) {
+          uniqueReadPages += end - interval[1];
+          interval[1] = end;
           if (i + 1 < intervals.length) {
             const nextInterval = intervals[parseInt(i) + 1];
             if (end >= nextInterval[0]) end = nextInterval[0] - 1;
@@ -99,8 +100,8 @@ class BookService {
             interval[1] = end;
           }
           // the else would be all the user interval lies inside an already existing interval
-          return { uniqueReadPages, intervals };
         }
+        return { uniqueReadPages, intervals };
       }
     }
     // new largest interval
