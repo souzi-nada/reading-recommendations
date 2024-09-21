@@ -5,8 +5,8 @@ import logger from '../../common/logger/index.js';
 export const sequelize = new Sequelize(DB_CONNECTION_STRING, {
   dialect: 'postgres',
   pool: {
-    max: pgDBConnection.maxNumOfClients,
-    idle: pgDBConnection.idleTimeoutMillis
+    max: pgDBConnection.maxNumOfClients || 10,
+    idle: pgDBConnection.idleTimeoutMillis || 30000
   },
   logging: msg => logger.info(msg)
 });
