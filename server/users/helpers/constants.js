@@ -26,5 +26,9 @@ export const errorCodes = Object.freeze({
   USER_NOT_FOUND: {
     message: 'User not found',
     code: 5
+  },
+  INVALID_CREDENTIALS: {
+    message: 'Invalid credentials',
+    code: 6
   }
 });

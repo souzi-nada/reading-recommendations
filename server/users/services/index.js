@@ -66,9 +66,9 @@ class UserService {
       let user = await User.findOne({ where: { email } });
       if (!user) {
         throw new ErrorResponse(
-          errorCodes.USER_NOT_FOUND.message,
+          errorCodes.INVALID_CREDENTIALS.message,
           NOT_FOUND,
-          errorCodes.USER_NOT_FOUND.code
+          errorCodes.INVALID_CREDENTIALS.code
         );
       }
       user = user.toJSON();
