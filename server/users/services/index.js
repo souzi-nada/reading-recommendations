@@ -64,7 +64,6 @@ class UserService {
   async login(email, password) {
     try {
       let user = await User.findOne({ where: { email } });
-      user = user.toJSON();
       if (!user) {
         throw new ErrorResponse(
           errorCodes.USER_NOT_FOUND.message,
@@ -72,6 +71,7 @@ class UserService {
           errorCodes.USER_NOT_FOUND.code
         );
       }
+      user = user.toJSON();
       const isMatch = await bcrypt.compare(password, user.hashedPassword);
       if (!isMatch) {
         throw new ErrorResponse(

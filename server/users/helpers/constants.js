@@ -22,5 +22,9 @@ export const errorCodes = Object.freeze({
   INVALID_ROLE: {
     message: 'Invalid role',
     code: 4
+  },
+  USER_NOT_FOUND: {
+    message: 'User not found',
+    code: 5
   }
 });
