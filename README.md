@@ -36,3 +36,11 @@
     ```
     npm test
     ```
+_____________________________________________________________________________________________
+
+## APIs Hints:
+- In Signup API, the role could be `ADMIN` or `READER`; only admins can create books.
+- In Login API, you just need the right email and password.
+- In create book API, user has to be an `ADMIN` and book name has to be unique.
+- In add interval API, user could be an `ADMIN` or a `READER`, and user has to provide a `bookName` and a valid interval.
+- In get recommendations API, user could be an ADMIN or a READER, top number of recommendations could be customized using the query `top`.
