@@ -17,11 +17,13 @@
     npm install
     ```
 - Create a .env.development file with the following content:
-    >DB_HOST=localhost
-    >DB_USER=myuser
-    >DB_PASSWORD=mypassword
-    >DB_NAME=mydatabase
-    >DB_PORT=5432
+    ```
+    DB_HOST=localhost
+    DB_USER=myuser
+    DB_PASSWORD=mypassword
+    DB_NAME=mydatabase
+    DB_PORT=5432
+    ```
 - To start in development mode:
     ```
     npm run dev
