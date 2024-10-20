@@ -11,6 +11,9 @@ pipeline {
                 }
                 stage('build') {
                     steps {
+                        withCredentials([string(credentialsId: 'ENV_DEVELOPMENT', variable: 'ENV_DEV')]) {
+                            sh ' echo "${ENV_DEV}" >> .env.development'
+                        }
                         nodejs('node-18') {
                         //   sh 'rm -rf node_modules && node --trace-warnings ... '
                           sh 'npm install'
@@ -19,7 +22,10 @@ pipeline {
                 }
                 stage('test'){
                     steps{
-                      nodejs('node-18') {
+                        withCredentials([string(credentialsId: 'ENV_TESTING', variable: 'ENV_TESTING')]) {
+                            sh ' echo "${ENV_TESTING}" >> .env.testing'
+                        }
+                        nodejs('node-18') {
                           sh 'npm test'
                         }
                     }
@@ -34,7 +40,10 @@ pipeline {
                             input 'Do you want to deploy?'
                             slackSend channel: '#jenkins-notifications', message: '@channel Thanks for Approval'
                         }
-                        sh "docker build -t suzy90/reading-recommendations:${env.BUILD_NUMBER} ."
+                        withCredentials([string(credentialsId: 'ENV_PRODUCTION', variable: 'ENV_PROD')]) {
+                            sh ' echo "${ENV_PROD}" >> .env.production'
+                            sh "docker build -t suzy90/reading-recommendations:${env.BUILD_NUMBER} ."
+                        }
                         withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
                             sh 'echo $PASSWORD | docker login -u $USERNAME --password-stdin'
                             sh "docker push suzy90/reading-recommendations:${env.BUILD_NUMBER}"
