@@ -11,7 +11,7 @@ pipeline {
                 }
                 stage('build') {
                     steps {
-                        nodejs('node-23') {
+                        nodejs('node-18') {
                         //   sh 'rm -rf node_modules && node --trace-warnings ... '
                           sh 'npm install'
                         }
