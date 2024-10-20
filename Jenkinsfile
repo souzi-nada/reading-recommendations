@@ -17,13 +17,13 @@ pipeline {
                         }
                     }
                 }
-                // stage('test'){
-                //     steps{
-                //       nodejs('node-23') {
-                //           sh 'npm test'
-                //         }
-                //     }
-                // }
+                stage('test'){
+                    steps{
+                      nodejs('node-18') {
+                          sh 'npm test'
+                        }
+                    }
+                }
                 stage('deploy'){
                     when {
                         expression { env.BRANCH_NAME == 'master' }
