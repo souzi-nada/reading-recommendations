@@ -3,7 +3,7 @@ pipeline {
     environment {
         SLACK_CREDENTIALS = 'Slack-Integration' 
         SLACK_CHANNEL = '#jenkins-notifications'
-        GIT_CREDENTIALS = 'github-yat-project'
+        GIT_CREDENTIALS = 'GitHub-souzi'
         DOCKER_REPO = 'suzy90/reading-recommendations'
     }
     stages {
