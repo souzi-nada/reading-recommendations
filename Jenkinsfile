@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        SLACK_CREDENTIALS = 'slack-webook' 
+        SLACK_CREDENTIALS = 'Slack-Integration' 
         SLACK_CHANNEL = '#jenkins-notifications'
         GIT_CREDENTIALS = 'github-yat-project'
         DOCKER_REPO = 'suzy90/reading-recommendations'
