@@ -1,26 +1,31 @@
 pipeline {
     agent any
+    environment {
+        SLACK_CREDENTIALS = 'slack-webook' 
+        SLACK_CHANNEL = '#jenkins-notifications'
+        GIT_CREDENTIALS = 'github-yat-project'
+        DOCKER_REPO = 'suzy90/reading-recommendations'
+    }
     stages {
         stage('Master Branch'){
             stages{
-                stage('checkout') {
+                stage('Checkout') {
                     steps {
-                        slackSend channel: '#jenkins-notifications', color: 'warning', message: "Build Started: ${env.JOB_NAME} [${env.BUILD_NUMBER}]\n(${env.BUILD_URL})", notifyCommitters: true, tokenCredentialId: 'slack-webook'
-                        git credentialsId: 'github-yat-project', url: 'https://github.com/souzi-nada/reading-recommendations'    
+                        slackSend channel: SLACK_CHANNEL, color: 'warning', message: "Build Started: ${env.JOB_NAME} [${env.BUILD_NUMBER}]\n(${env.BUILD_URL})", notifyCommitters: true, tokenCredentialId: SLACK_CREDENTIALS
+                        git credentialsId: GIT_CREDENTIALS, url: 'https://github.com/souzi-nada/reading-recommendations'    
                     }
                 }
-                stage('build') {
+                stage('Build') {
                     steps {
                         withCredentials([string(credentialsId: 'ENV_DEVELOPMENT', variable: 'ENV_DEV')]) {
                             sh ' echo "${ENV_DEV}" >> .env.development'
                         }
                         nodejs('node-18') {
-                        //   sh 'rm -rf node_modules && node --trace-warnings ... '
                           sh 'npm install'
                         }
                     }
                 }
-                stage('test'){
+                stage('Test'){
                     steps{
                         withCredentials([string(credentialsId: 'ENV_TESTING', variable: 'ENV_TESTING')]) {
                             sh ' echo "${ENV_TESTING}" >> .env.testing'
@@ -30,42 +35,37 @@ pipeline {
                         }
                     }
                 }
-                stage('deploy'){
+                stage('Deploy'){
                     when {
                         expression { env.BRANCH_NAME == 'master' }
                     }
                     steps {
                         timeout(activity: true, time: 10) {
-                            slackSend channel: '#jenkins-notifications', message: '@channel Kindly approve or decline the manual trigger'
+                            slackSend channel: SLACK_CHANNEL, message: '@channel Kindly approve or decline the manual trigger'
                             input 'Do you want to deploy?'
-                            slackSend channel: '#jenkins-notifications', message: '@channel Thanks for Approval'
+                            slackSend channel: SLACK_CHANNEL, message: '@channel Thanks for Approval'
                         }
                         withCredentials([string(credentialsId: 'ENV_PRODUCTION', variable: 'ENV_PROD')]) {
                             sh ' echo "${ENV_PROD}" >> .env.production'
                             sh "docker build -t suzy90/reading-recommendations:${env.BUILD_NUMBER} ."
+                            sh "docker tag suzy90/reading-recommendations:${env.BUILD_NUMBER} suzy90/reading-recommendations:latest"
                         }
                         withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
                             sh 'echo $PASSWORD | docker login -u $USERNAME --password-stdin'
                             sh "docker push suzy90/reading-recommendations:${env.BUILD_NUMBER}"
+                            sh "docker push suzy90/reading-recommendations:latest"
                         }
                     }
                 }
-                    }
-            
+            }
         }
     }
     post {
-      // only triggered when blue or green sign
       success {
-          slackSend channel: '#jenkins-notifications', color: 'good', message: "Build Succeeded: ${env.JOB_NAME} [${env.BUILD_NUMBER}]\n(${env.BUILD_URL})", notifyCommitters: true, tokenCredentialId: 'slack-webook'
+          slackSend channel: SLACK_CHANNEL , color: 'good', message: "Build Succeeded: ${env.JOB_NAME} [${env.BUILD_NUMBER}]\n(${env.BUILD_URL})", notifyCommitters: true, tokenCredentialId: SLACK_CREDENTIALS
       }
-      // triggered when red sign
       failure {
-          slackSend channel: '#jenkins-notifications', color: 'danger', message: "Build Failed: ${env.JOB_NAME} [${env.BUILD_NUMBER}]\n(${env.BUILD_URL})", notifyCommitters: true, tokenCredentialId: 'slack-webook'
+          slackSend channel: SLACK_CHANNEL, color: 'danger', message: "Build Failed: ${env.JOB_NAME} [${env.BUILD_NUMBER}]\n(${env.BUILD_URL})", notifyCommitters: true, tokenCredentialId: SLACK_CREDENTIALS
       }
-      // trigger every-works
-    //   always {
-    //       slackSend ...
-    //   }
     }
 }
