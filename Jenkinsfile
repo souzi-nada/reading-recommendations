@@ -1,5 +1,6 @@
 pipeline {
     agent any
+    
     environment {
         SLACK_CREDENTIALS = 'Slack-Integration' 
         SLACK_CHANNEL = '#jenkins-notifications'
