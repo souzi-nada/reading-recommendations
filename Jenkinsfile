@@ -15,27 +15,28 @@ pipeline {
                         git credentialsId: GIT_CREDENTIALS, url: 'https://github.com/souzi-nada/reading-recommendations'    
                     }
                 }
-                stage('Build') {
-                    steps {
-                        withCredentials([string(credentialsId: 'ENV_DEVELOPMENT', variable: 'ENV_DEV')]) {
-                            sh ' echo "${ENV_DEV}" >> .env.development'
-                        }
-                        nodejs('node-18') {
-                          sh 'npm install'
-                        }
-                    }
-                }
-                stage('Test'){
+                // stage('Build') {
+                //     steps {
+                //         withCredentials([string(credentialsId: 'ENV_DEVELOPMENT', variable: 'ENV_DEV')]) {
+                //             sh ' echo "${ENV_DEV}" >> .env.development'
+                //         }
+                //         nodejs('node-18') {
+                //           sh 'npm install'
+                //         }
+                //     }
+                // }
+                stage('Testing Phase'){
                     steps{
                         withCredentials([string(credentialsId: 'ENV_TESTING', variable: 'ENV_TESTING')]) {
                             sh ' echo "${ENV_TESTING}" >> .env.testing'
                         }
                         nodejs('node-18') {
-                          sh 'npm test'
+                            sh 'npm install'
+                            sh 'npm test'
                         }
                     }
                 }
-                stage('Deploy'){
+                stage('Publish on DockerHub'){
                     when {
                         expression { env.BRANCH_NAME == 'master' }
                     }
