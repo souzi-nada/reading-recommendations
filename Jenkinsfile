@@ -54,7 +54,7 @@ pipeline {
                         }
                         withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
                             sh 'echo $PASSWORD | docker login -u $USERNAME --password-stdin'
-                             sh "docker build -t suzy90/reading-recommendations:${env.BUILD_NUMBER} ."
+                            sh "docker build -t suzy90/reading-recommendations:${env.BUILD_NUMBER} ."
                             sh "docker tag suzy90/reading-recommendations:${env.BUILD_NUMBER} suzy90/reading-recommendations:latest"
                             sh "docker push suzy90/reading-recommendations:${env.BUILD_NUMBER}"
                             sh 'docker push suzy90/reading-recommendations:latest'
