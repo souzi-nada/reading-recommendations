@@ -1,9 +1,9 @@
 ---
 # tasks file for app-deployment
 - name: Install Docker Engine
-      apt:
-        name: docker.io
-        state: present
+  apt:
+    name: docker.io
+    state: present
 - name: Install Docker CLI
   apt:
     name: docker-compose
