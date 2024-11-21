@@ -55,8 +55,8 @@ pipeline {
                         //     slackSend channel: SLACK_CHANNEL, message: '@channel Thanks for Approval'
                         // }
                         withCredentials([string(credentialsId: 'ENV_PRODUCTION', variable: 'ENV_PROD')]) {
-                            sh 'echo "${ENV_PROD}" >> reading-recommendations/.env.production'
-                            sh "docker build -t suzy90/reading-recommendations:${env.BUILD_NUMBER} ./reading-recommendations"
+                            sh 'echo "${ENV_PROD}" >> .env.production'
+                            sh "docker build -t suzy90/reading-recommendations:${env.BUILD_NUMBER} ."
                             sh "docker tag suzy90/reading-recommendations:${env.BUILD_NUMBER} suzy90/reading-recommendations:latest"
                         }
                         withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
