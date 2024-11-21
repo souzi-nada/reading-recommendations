@@ -1,6 +1,6 @@
 ---
 - name: Deploy application on production
-  hosts: local_servers
+  hosts: localhost
   become: yes
   vars:
     build_number: "{{ build_number }}"
