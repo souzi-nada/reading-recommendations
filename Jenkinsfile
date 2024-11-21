@@ -26,18 +26,20 @@ pipeline {
                 //     }
                 // }
                 stage('Testing App Phase') {
-                    steps {
+                     steps {
                         withCredentials([string(credentialsId: 'ENV_TESTING', variable: 'ENV_TESTING')]) {
                             sh ' echo "${ENV_TESTING}" >> .env.testing'
                         }
-                        try {
-                            nodejs('node-18') {
-                                sh 'npm install'
-                                sh 'npm test'
+                        script {
+                            try {
+                                nodejs('node-18') {
+                                    sh 'npm install'
+                                    sh 'npm test'
+                                }
+                            } catch (Exception e) {
+                                currentBuild.result = 'FAILURE' // Mark build as failure
+                                error("Tests failed: ${e}") // Stop the pipeline
                             }
-                        }catch (exc) {
-                            currentBuild.result = 'FAILURE'
-                            error("Tests failed: ${e}")
                         }
                     }
                 }
