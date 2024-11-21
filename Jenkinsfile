@@ -68,6 +68,7 @@ pipeline {
                             input 'Do you want to deploy?'
                             slackSend channel: SLACK_CHANNEL, message: '@channel Thanks for Approval'
                         }
+                        sh 'ansbile --version'
                         ansiblePlaybook(
                             playbook: 'ansible/app-deploy.yml',
                             inventory: 'inventory/localhost',
