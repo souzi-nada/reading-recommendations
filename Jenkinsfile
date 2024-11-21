@@ -49,18 +49,13 @@ pipeline {
                         expression { currentBuild.result != 'FAILURE' }
                     }
                     steps {
-                        // timeout(activity: true, time: 10) {
-                        //     slackSend channel: SLACK_CHANNEL, message: '@channel Kindly approve or decline the manual trigger'
-                        //     input 'Do you want to deploy?'
-                        //     slackSend channel: SLACK_CHANNEL, message: '@channel Thanks for Approval'
-                        // }
                         withCredentials([string(credentialsId: 'ENV_PRODUCTION', variable: 'ENV_PROD')]) {
                             sh 'echo "${ENV_PROD}" >> .env.production'
-                            sh "docker build -t suzy90/reading-recommendations:${env.BUILD_NUMBER} ."
-                            sh "docker tag suzy90/reading-recommendations:${env.BUILD_NUMBER} suzy90/reading-recommendations:latest"
                         }
                         withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
                             sh 'echo $PASSWORD | docker login -u $USERNAME --password-stdin'
+                             sh "docker build -t suzy90/reading-recommendations:${env.BUILD_NUMBER} ."
+                            sh "docker tag suzy90/reading-recommendations:${env.BUILD_NUMBER} suzy90/reading-recommendations:latest"
                             sh "docker push suzy90/reading-recommendations:${env.BUILD_NUMBER}"
                             sh 'docker push suzy90/reading-recommendations:latest'
                         }
