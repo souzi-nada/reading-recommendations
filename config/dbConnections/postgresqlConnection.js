@@ -1,7 +1,6 @@
 import { Sequelize } from 'sequelize';
 import { pgDBConnection, DB_CONNECTION_STRING } from '../env/index.js';
 import logger from '../../common/logger/index.js';
-
 export const sequelize = new Sequelize(DB_CONNECTION_STRING, {
   dialect: 'postgres',
   pool: {

@@ -1,0 +1,42 @@
+---
+# tasks file for app-deployment
+- name: Pull the latest Docker image
+  community.docker.docker_image:
+    name: "{{ docker_image }}"
+    tag: "{{ build_number }}"
+    state: present
+
+- name: Deploy reading recommendations app
+  kubernetes.core.k8s:
+    kubeconfig: "/kubeconfig"   
+    state: present
+    definition: "{{ lookup('file', 'deployment.yaml') }}"
+
+- name: Expose Service
+  kubernetes.core.k8s:
+    kubeconfig: "/kubeconfig"   
+    state: present
+    definition: "{{ lookup('file', 'service.yaml') }}"   
+
+# - name: Stop existing Docker container
+#   community.docker.docker_container:
+#     name: reading-recommendations
+#     state: stopped
+#     force_kill: yes
+#   ignore_errors: true
+
+# - name: Remove old Docker container
+#   community.docker.docker_container:
+#     name: reading-recommendations
+#     state: absent
+
+# - name: Run the new Docker container
+#   community.docker.docker_container:
+#     name: reading-recommendations
+#     image: "{{ docker_image }}:{{ build_number }}"
+#     state: started
+#     ports:
+#       - "{{ app_port }}:3000"
+#     restart_policy: always
+#     env:
+#       NODE_ENV: production

@@ -21,3 +21,4 @@ export const API_BASE_PATH = `${API_BASE_URL}/${API_VERSION}`;
 export const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 
 export const DB_CONNECTION_STRING = process.env.DB_CONNECTION_STRING;
+

@@ -1,0 +1,5 @@
+---
+# defaults file for app-deployment
+docker_image: "suzy90/reading-recommendations"
+build_number: "latest"
+app_port: 3000

@@ -1,0 +1,9 @@
+---
+- name: Deploy application on production
+  hosts: local_servers
+  become: yes
+  vars:
+    build_number: "{{ build_number }}"
+  roles:
+    - app-deployment
+
