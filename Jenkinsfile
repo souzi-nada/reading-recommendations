@@ -117,6 +117,7 @@ pipeline {
                             slackSend channel: SLACK_CHANNEL, message: '@channel Thanks for Approval'
                         }
                         sh 'ansible --version'
+                        sh 'ansible-inventory -i ansible/inventory/localhost.ini --list'
                         ansiblePlaybook(
                             playbook: 'ansible/app-deploy.yml',
                             inventory: 'ansible/inventory/localhost.ini',
