@@ -21,6 +21,12 @@ pipeline {
                 //         git credentialsId: GIT_CREDENTIALS, url: 'https://github.com/souzi-nada/reading-recommendations'
                 //     }
                 // }
+                // stage('Git Checkout') {
+                //     steps {
+                //         slackSend channel: SLACK_CHANNEL, color: 'warning', message: "Build Started: ${env.JOB_NAME} [${env.BUILD_NUMBER}]\n(${env.BUILD_URL})", notifyCommitters: true, tokenCredentialId: SLACK_CREDENTIALS
+                //         git credentialsId: GIT_CREDENTIALS, url: 'https://github.com/souzi-nada/reading-recommendations'
+                //     }
+                // }
                 // stage('Build') {
                 //     steps {
                 //         withCredentials([string(credentialsId: 'ENV_DEVELOPMENT', variable: 'ENV_DEV')]) {
@@ -110,7 +116,6 @@ pipeline {
                             input 'Do you want to deploy?'
                             slackSend channel: SLACK_CHANNEL, message: '@channel Thanks for Approval'
                         }
-                        sh 'ansible --version'
                         sh 'ansible --version'
                         ansiblePlaybook(
                             playbook: 'ansible/app-deploy.yml',
