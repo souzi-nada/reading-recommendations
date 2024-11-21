@@ -1,5 +1,8 @@
 ---
 # tasks file for app-deployment
+- name: Update apt repository
+  apt:
+    update_cache: yes
 - name: Install Docker Engine
   apt:
     name: docker.io
