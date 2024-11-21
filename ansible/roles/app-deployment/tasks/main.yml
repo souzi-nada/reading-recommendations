@@ -1,5 +1,18 @@
 ---
 # tasks file for app-deployment
+- name: Install Docker Engine
+      apt:
+        name: docker.io
+        state: present
+- name: Install Docker CLI
+  apt:
+    name: docker-compose
+    state: present
+- name: Start Docker service
+  service:
+    name: docker
+    state: started
+    enabled: true
 - name: Pull the latest Docker image
   community.docker.docker_image:
     name: "{{ docker_image }}"
