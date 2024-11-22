@@ -3,6 +3,7 @@
 - name: Update apt repository
   apt:
     update_cache: yes
+  become_user: root
 - name: Install Docker Engine
   apt:
     name: docker.io

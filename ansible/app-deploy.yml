@@ -1,7 +1,7 @@
 ---
 - name: Deploy application on production
   hosts: localhost
-  become: no
+  become: true
   vars:
     build_number: "{{ build_number }}"
   roles:
