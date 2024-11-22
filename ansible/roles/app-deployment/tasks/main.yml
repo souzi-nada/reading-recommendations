@@ -4,33 +4,28 @@
   apt:
     update_cache: yes
 
+  
 - name: Download Docker installation script
-  get_url:
-    url: https://get.docker.com
-    dest: /tmp/get-docker.sh
-    mode: '0755'
-    force: yes
+  ansible.builtin.shell: "curl -fsSL https://get.docker.com -o /tmp/get-docker.sh"
+  args:
+    creates: /tmp/get-docker.sh
 
 - name: Run Docker installation script
-  command: sh /tmp/get-docker.sh
+  ansible.builtin.shell: "sh /tmp/get-docker.sh"
   args:
     creates: /usr/bin/docker
 
 - name: Start and enable Docker service
-  systemd:
+  ansible.builtin.systemd:
     name: docker
     enabled: yes
     state: started
 
-- name: Verify Docker installation
-  command: docker --version
-  register: docker_version
-  failed_when: docker_version.rc != 0
-  changed_when: false
-
-- name: Display Docker version
-  debug:
-    msg: "Docker version: {{ docker_version.stdout }}"
+- name: Add the current user to the docker group
+  ansible.builtin.user:
+    name: "ubuntu"  # Use the current user running the playbook
+    groups: docker
+    append: yes
     
 - name: Pull the latest Docker image
   community.docker.docker_image:
