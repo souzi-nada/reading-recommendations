@@ -19,8 +19,7 @@
   args:
     creates: get-docker.sh
 - name: Run Docker Installation Script
-  ansible.builtin.shell: "sh get-docker.sh && dockerd-rootless-setuptool.sh install "
-  become: true
+  ansible.builtin.shell: "sh get-docker.sh"
   args:
     creates: /usr/bin/docker
 - name: Start Docker Service

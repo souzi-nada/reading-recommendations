@@ -4,11 +4,6 @@
   become: true
   vars:
     build_number: "{{ build_number }}"
-  tasks:
-    - name: Example of a privileged command
-      command: whoami
-    - name: Test sudo
-      command: sudo whoami
   roles:
     - app-deployment
 

@@ -1,0 +1,3 @@
+docker_image: suzy90/reading-recommendations
+app_port: 3000
+build_number: latest
