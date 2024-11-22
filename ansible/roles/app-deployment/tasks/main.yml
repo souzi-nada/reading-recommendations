@@ -39,7 +39,7 @@
     append: yes
     
 - name: Pull the latest Docker image
-  community.docker.docker_image:
+  community.docker.docker_image_pull:
     name: "{{ docker_image }}"
     tag: "{{ build_number }}"
     source: pull

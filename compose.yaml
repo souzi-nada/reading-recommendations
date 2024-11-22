@@ -1,20 +1,20 @@
 services:
-  # jenkins-docker:
-  #   image: docker:dind
-  #   container_name: jenkins-docker
-  #   privileged: true
-  #   ports:
-  #     - 2376:2376
-  #   volumes:
-  #     - jenkins-data:/var/jenkins_home
-  #     - jenkins-docker-certs:/certs/client
-  #   networks:
-  #     jenkins:
-  #       aliases:
-  #         - docker
-  #   environment:
-  #     - DOCKER_TLS_CERTDIR=/certs
-  #   restart: unless-stopped
+  jenkins-docker:
+    image: docker:dind
+    container_name: jenkins-docker
+    privileged: true
+    ports:
+      - 2376:2376
+    volumes:
+      - jenkins-data:/var/jenkins_home
+      - jenkins-docker-certs:/certs/client
+    networks:
+      jenkins:
+        aliases:
+          - docker
+    environment:
+      - DOCKER_TLS_CERTDIR=/certs
+    restart: unless-stopped
   # jenkins-blueocean:
   #   build: ./Dockerfile-jenkins
   #   container_name: jenkins-blueocean
