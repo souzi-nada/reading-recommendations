@@ -111,12 +111,12 @@ pipeline {
                 // }
                 stage('Deploy App'){
                     steps {
-                        timeout(activity: true, time: 10) {
-                            slackSend channel: SLACK_CHANNEL, message: '@channel Kindly approve or decline the manual trigger'
-                            input 'Do you want to deploy?'
-                            slackSend channel: SLACK_CHANNEL, message: '@channel Thanks for Approval'
-                        }
-                        sh 'ansible --version'
+                        // timeout(activity: true, time: 10) {
+                        //     slackSend channel: SLACK_CHANNEL, message: '@channel Kindly approve or decline the manual trigger'
+                        //     input 'Do you want to deploy?'
+                        //     slackSend channel: SLACK_CHANNEL, message: '@channel Thanks for Approval'
+                        // }
+                        // sh 'ansible --version'
                         sh 'ansible-inventory -i ansible/inventory/localhost.ini --list'
                         ansiblePlaybook(
                             playbook: 'ansible/app-deploy.yml',

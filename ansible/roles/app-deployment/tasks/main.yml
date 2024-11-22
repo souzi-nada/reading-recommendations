@@ -3,6 +3,17 @@
 - name: Update apt repository
   apt:
     update_cache: yes
+- name: Install required system packages
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - python3-pip
+      - virtualenv
+      - python3-setuptools
+    state: latest
 - name: Download Docker Installation Script
   ansible.builtin.shell: "curl -fsSL https://get.docker.com -o get-docker.sh"
   args:
