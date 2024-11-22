@@ -3,38 +3,19 @@
 - name: Update apt repository
   apt:
     update_cache: yes
-- name: Install required system packages
-  apt:
-    pkg:
-      - apt-transport-https
-      - ca-certificates
-      - curl
-      - software-properties-common
-      - python3-pip
-      - virtualenv
-      - python3-setuptools
-    state: latest
-    update_cache: true 
-- name: Add Docker GPG apt Key
-  apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
-    state: present
-
-- name: Add Docker Repository
-  apt_repository:
-    repo: deb https://download.docker.com/linux/ubuntu focal stable
-    state: present
-
-- name: Update apt and install docker-ce
-  apt:
-    name: docker-ce
-    state: latest
-    update_cache: true
-
-- name: Install Docker Module for Python
-  pip:
+- name: Download Docker Installation Script
+  ansible.builtin.shell: "curl -fsSL https://get.docker.com -o get-docker.sh"
+  args:
+    creates: get-docker.sh
+- name: Run Docker Installation Script
+  ansible.builtin.shell: "sh get-docker.sh"
+  args:
+    creates: /usr/bin/docker
+- name: Start Docker Service
+  service:
     name: docker
-
+    enabled: yes
+    state: started
 - name: Add the current user to the docker group
   ansible.builtin.user:
     name: "jenkins"  # Use the current user running the playbook
