@@ -1,0 +1,82 @@
+FROM nginx:latest
+
+# Install OpenSSH server
+RUN apt-get update && apt-get install -y openssh-server openjdk-17-jdk openjdk-17-jre && \
+    mkdir /var/run/sshd
+
+# Create a new user with a home directory
+RUN useradd -ms /bin/bash jenkins && echo "jenkins:jenkins" | chpasswd
+
+# Grant the new user sudo privileges (optional, if needed)
+RUN apt-get install -y sudo && \
+    usermod -aG sudo jenkins
+
+RUN mkdir -p /home/jenkins/.ssh && \
+    chmod 700 /home/jenkins/.ssh && \
+    touch /home/jenkins/.ssh/authorized_keys && \
+    chown -R jenkins:jenkins /home/jenkins/.ssh
+
+# Configure SSH server for non-root login
+RUN sed -i 's/^#PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config && \
+    sed -i 's/^#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+
+
+# Set up SSH root login
+# RUN echo 'root:your_secure_password' | chpasswd && \
+#     sed -i 's/^#PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+#     sed -i 's/^#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+
+# Ensure Nginx has correct permissions
+# RUN mkdir -p /var/cache/nginx /var/cache/nginx/client_temp && \
+#     chown -R nginx:nginx /var/cache/nginx && \
+#     chmod -R 755 /var/cache/nginx
+
+# Expose SSH and Nginx ports
+EXPOSE 22 80
+
+# Start SSHD and Nginx
+CMD ["bash", "-c", "/usr/sbin/sshd && nginx -g 'daemon off;'"]
+
+
+# FROM nginx:latest
+
+# # Install OpenSSH server
+# RUN apt-get update && apt-get install -y openssh-server && \
+#     mkdir -p /var/run/sshd && \
+#     chown root:root /var/run/sshd
+
+# # Create a new user with a home directory
+# RUN useradd -ms /bin/bash jenkins && echo "jenkins:jenkins" | chpasswd
+
+# # Grant the new user sudo privileges (optional, if needed)
+# RUN apt-get install -y sudo && \
+#     usermod -aG sudo jenkins
+
+# RUN mkdir -p /home/jenkins/.ssh && \
+#     chmod 700 /home/jenkins/.ssh && \
+#     touch /home/jenkins/.ssh/authorized_keys && \
+#     chown -R jenkins:jenkins /home/jenkins/.ssh
+
+
+# # Ensure Nginx has correct permissions
+# RUN mkdir -p /var/cache/nginx /var/cache/nginx/client_temp && \
+#     chown -R nginx:nginx /var/cache/nginx && \
+#     chmod -R 755 /var/cache/nginx
+
+# # Configure SSH server for non-root login
+# RUN sed -i 's/^#PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config && \
+#     sed -i 's/^#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+
+
+# # Set up SSH root login
+# # RUN echo 'root:your_secure_password' | chpasswd && \
+# #     sed -i 's/^#PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+# #     sed -i 's/^#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+
+# # Expose SSH port
+# EXPOSE 22 80
+
+# # Start both Nginx and SSHD
+# # CMD ["bash", "-c", "/usr/sbin/sshd && nginx -g 'daemon off;'"]
+# CMD ["bash", "-c", "sshd && nginx -g 'daemon off;'"]
+

@@ -1,0 +1,56 @@
+services:
+  # jenkins-docker:
+  #   image: docker:dind
+  #   container_name: jenkins-docker
+  #   privileged: true
+  #   ports:
+  #     - 2376:2376
+  #   volumes:
+  #     - jenkins-data:/var/jenkins_home
+  #     - jenkins-docker-certs:/certs/client
+  #   networks:
+  #     jenkins:
+  #       aliases:
+  #         - docker
+  #   environment:
+  #     - DOCKER_TLS_CERTDIR=/certs
+  #   restart: unless-stopped
+  # jenkins-blueocean:
+  #   build: ./Dockerfile-jenkins
+  #   container_name: jenkins-blueocean
+  #   restart: on-failure
+  #   networks:
+  #     - jenkins
+  #   environment:
+  #     - DOCKER_HOST=tcp://docker:2376
+  #     - DOCKER_CERT_PATH=/certs/client 
+  #     - DOCKER_TLS_VERIFY=1
+  #   ports:
+  #     - "8080:8080"
+  #     - "50000:50000"
+  #   volumes:
+  #     - jenkins-data:/var/jenkins_home
+  #     - jenkins-docker-certs:/certs/client:ro
+  app-server:
+    build:
+      dockerfile: Dockerfile-webserver
+#    privileged: true 
+#    user: root
+    ports:
+      - "8100:80"
+      - "2222:22"
+    volumes:
+      - .:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      # - ./id_rsa.pub:/home/nginxuser/.ssh/authorized_keys:ro
+
+networks:
+  jenkins:
+
+volumes:
+  jenkins-data:
+  jenkins-docker-certs:
+
+secrets:
+  jenkins_ssh_key:
+    file: /run/secrets/jenkins_ssh_key
