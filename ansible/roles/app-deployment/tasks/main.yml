@@ -37,6 +37,7 @@
   community.docker.docker_image:
     name: "{{ docker_image }}"
     tag: "{{ build_number }}"
+    source: pull
     state: present
 
 - name: Deploy reading recommendations app
