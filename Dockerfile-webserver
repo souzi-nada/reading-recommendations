@@ -28,7 +28,8 @@ RUN mkdir -p /home/jenkins/.ssh && \
     chown -R jenkins:jenkins /home/jenkins/.ssh
 
 # Grant Jenkins user sudo privileges without a password prompt
-RUN echo 'jenkins ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+# RUN echo 'jenkins ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+RUN echo "jenkins  ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/jenkins
 
 # Expose SSH 
 EXPOSE 22
