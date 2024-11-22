@@ -14,6 +14,10 @@
       - virtualenv
       - python3-setuptools
     state: latest
+- name: Install Python `requests` library
+  pip:
+    name: requests
+    executable: pip3
 - name: Download Docker Installation Script
   ansible.builtin.shell: "curl -fsSL https://get.docker.com -o get-docker.sh"
   args:
