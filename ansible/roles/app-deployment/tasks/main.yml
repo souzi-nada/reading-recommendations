@@ -44,13 +44,11 @@
     tag: "{{ build_number }}"
     source: pull
     state: present
-
 - name: Deploy reading recommendations app
   kubernetes.core.k8s:
     kubeconfig: "/kubeconfig"   
     state: present
     definition: "{{ lookup('file', 'deployment.yaml') }}"
-
 - name: Expose Service
   kubernetes.core.k8s:
     kubeconfig: "/kubeconfig"   
