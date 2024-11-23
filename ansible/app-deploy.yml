@@ -5,5 +5,7 @@
   vars:
     build_number: "{{ build_number }}"
   roles:
+    - config
+    - docker
     - app-deployment
 
