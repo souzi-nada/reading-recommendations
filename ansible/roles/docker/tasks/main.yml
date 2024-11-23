@@ -130,7 +130,7 @@
 - name: Update the apt package index
   apt:
     update_cache: yes
-    
+
 - name: Install Docker and related packages
   ansible.builtin.apt:
     name: "{{ item }}"
@@ -162,6 +162,7 @@
   loop:
     - docker.service
     - containerd.service
+    
 # - name: Install Docker
 #   apt:
 #     name: docker-ce
