@@ -37,36 +37,50 @@
 # - name: Debug Docker version
 #   debug:
 #     var: docker_version_check.stdout
-- name: Update apt repository
-  apt:
-    update_cache: yes
+# - name: Update apt repository
+#   apt:
+#     update_cache: yes
   
-- name: Download Docker installation script
-  ansible.builtin.shell: "curl -fsSL https://get.docker.com -o /tmp/get-docker.sh"
-  args:
-    creates: /tmp/get-docker.sh
+# - name: Download Docker installation script
+#   ansible.builtin.shell: "curl -fsSL https://get.docker.com -o /tmp/get-docker.sh"
+#   args:
+#     creates: /tmp/get-docker.sh
 
-- name: Run Docker installation script
-  ansible.builtin.shell: "sh /tmp/get-docker.sh"
-  args:
-    creates: /usr/bin/docker
+# - name: Run Docker installation script
+#   ansible.builtin.shell: "sh /tmp/get-docker.sh"
+#   args:
+#     creates: /usr/bin/docker
 
-- name: Start and enable Docker service
-  ansible.builtin.systemd:
-    name: docker
-    enabled: yes
-    state: started
+# - name: Start and enable Docker service
+#   ansible.builtin.systemd:
+#     name: docker
+#     enabled: yes
+#     state: started
 
-- name: Add the current user to the docker group
-  ansible.builtin.user:
-    name: "ubuntu"  # Use the current user running the playbook
-    groups: docker
-    append: yes
+# - name: Add the current user to the docker group
+#   ansible.builtin.user:
+#     name: "ubuntu"  # Use the current user running the playbook
+#     groups: docker
+#     append: yes
 
-- name: Install Python 3 and Pip
-  apt:
-    name:
-      - python3
-      - python3-pip
-    state: present
-    update_cache: yes
+# - name: Install Python 3 and Pip
+#   apt:
+#     name:
+#       - python3
+#       - python3-pip
+#     state: present
+#     update_cache: yes
+
+- name: Pull the Docker-in-Docker image
+  docker_image:
+    name: docker:dind
+    image: docker:dind
+
+- name: Run the Docker-in-Docker container
+  docker_container:
+    name: my_dind_container
+    image: docker:dind
+    privileged: yes
+    detach: yes
+    ports:
+      - "2375:2375"
