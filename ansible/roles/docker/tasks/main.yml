@@ -119,10 +119,7 @@
 #     msg: "Architecture: {{ ansible_architecture }}, Codename: {{ ansible_lsb.codename }}"
 
 - name: Ensure Docker GPG keyring is installed
-  ansible.builtin.command:
-    cmd: >
-      curl -fsSL https://download.docker.com/linux/ubuntu/gpg |
-      gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  ansible.builtin.shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
   args:
     creates: /etc/apt/keyrings/docker.gpg
 
