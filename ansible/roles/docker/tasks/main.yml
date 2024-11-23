@@ -37,71 +37,36 @@
 # - name: Debug Docker version
 #   debug:
 #     var: docker_version_check.stdout
-- name: Remove any existing Docker installation
-  apt:
-    name: docker-ce
-    state: absent
-  ignore_errors: true  # In case Docker is not installed, this will not cause an error
-
-- name: Remove old versions of Docker if installed
-  apt:
-    name: docker
-    state: absent
-  ignore_errors: true  # To remove any leftover Docker packages
-
-- name: Install keyrings directory
-  ansible.builtin.file:
-    path: /etc/apt/keyrings
-    state: directory
-    mode: '0755'
-
-- name: Download Docker’s official GPG key
-  get_url:
-    url: https://download.docker.com/linux/ubuntu/gpg
-    dest: /etc/apt/keyrings/docker.gpg
-    mode: 0644
-
-- name: Add Docker APT repository
-  ansible.builtin.apt_repository:
-    repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable"
-    state: present
-    filename: docker.list
-
-- name: Update apt package cache
+- name: Update apt repository
   apt:
     update_cache: yes
+  
+- name: Download Docker installation script
+  ansible.builtin.shell: "curl -fsSL https://get.docker.com -o /tmp/get-docker.sh"
+  args:
+    creates: /tmp/get-docker.sh
 
-- name: Install Docker
+- name: Run Docker installation script
+  ansible.builtin.shell: "sh /tmp/get-docker.sh"
+  args:
+    creates: /usr/bin/docker
+
+- name: Start and enable Docker service
+  ansible.builtin.systemd:
+    name: docker
+    enabled: yes
+    state: started
+
+- name: Add the current user to the docker group
+  ansible.builtin.user:
+    name: "ubuntu"  # Use the current user running the playbook
+    groups: docker
+    append: yes
+
+- name: Install Python 3 and Pip
   apt:
     name:
-      - docker-ce
-      - docker-ce-cli
-      - containerd.io
-      - docker-buildx-plugin
-      - docker-compose-plugin
+      - python3
+      - python3-pip
     state: present
-
-- name: Start Docker service
-  service:
-    name: docker
-    state: started
-    enabled: yes
-- name: Add Docker group
-  ansible.builtin.group:
-    name: docker
-    state: present
-
-- name: Add user to Docker group
-  ansible.builtin.user:
-    name: "{{ ansible_user }}"
-    groups: docker
-    append: true
-
-- name: Enable and start Docker services
-  ansible.builtin.systemd:
-    name: "{{ item }}"
-    enabled: true
-    state: started
-  loop:
-    - docker.service
-    - containerd.service
+    update_cache: yes
