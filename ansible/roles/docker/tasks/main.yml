@@ -114,18 +114,15 @@
 # - name: Set up the Docker repository
 #   command: add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 
-- name: Print architecture variables
-  ansible.builtin.debug:
-    msg: "Architecture: {{ ansible_architecture }}, Codename: {{ ansible_lsb.codename }}"
+# - name: Print architecture variables
+#   ansible.builtin.debug:
+#     msg: "Architecture: {{ ansible_architecture }}, Codename: {{ ansible_lsb.codename }}"
 
-- name: Add Docker repository
+- name: Add repository into sources list
   ansible.builtin.apt_repository:
-    repo: >-
-      deb [arch={{ arch_mapping[ansible_architecture] | default(ansible_architecture) }}
-      signed-by=/etc/apt/keyrings/docker.gpg]
-      https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable
-    filename: docker
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable
     state: present
+    filename: docker
 
 - name: Update the apt package index
   apt:
@@ -162,7 +159,7 @@
   loop:
     - docker.service
     - containerd.service
-    
+
 # - name: Install Docker
 #   apt:
 #     name: docker-ce
