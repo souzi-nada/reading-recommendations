@@ -1,10 +1,5 @@
 ---
 # tasks file for docker
-- name: Install Python requests library via apt
-  apt:
-    name: python3-requests
-    state: present
-  become: true
 - name: Download Docker Installation Script
   ansible.builtin.shell: "curl -fsSL https://get.docker.com -o get-docker.sh"
   args:
@@ -12,14 +7,30 @@
 - name: Run Docker Installation Script
   ansible.builtin.shell: "sh get-docker.sh"
   args:
-    creates: /usr/bin/docker
-- name: Start Docker Service
+    creates: /usr/bin/docker || /usr/local/bin/docker
+  register: docker_install_output
+  ignore_errors: true
+
+- name: Debug Docker installation output
+  debug:
+    var: docker_install_output.stderr
+
+- name: Start and Enable Docker Service
   service:
     name: docker
     enabled: yes
     state: started
 - name: Add the current user to the docker group
   ansible.builtin.user:
-    name: "jenkins"  # Use the current user running the playbook
+    name: "jenkins"  # Use the appropriate username
     groups: docker
     append: yes
+
+- name: Check Docker installation
+  ansible.builtin.command: docker --version
+  register: docker_version_check
+  failed_when: "'Docker version' not in docker_version_check.stdout"
+
+- name: Debug Docker version
+  debug:
+    var: docker_version_check.stdout
