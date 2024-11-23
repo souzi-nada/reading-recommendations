@@ -1,9 +1,11 @@
 ---
 # tasks file for app-deployment
 - name: Pull the latest Docker image
-  community.docker.docker_image_pull:
+  community.docker.docker_image:
     name: "{{ docker_image }}"
     tag: "{{ build_number }}"
+    source: pull
+    state: present
 
 - name: Deploy reading recommendations app
   kubernetes.core.k8s:
