@@ -41,3 +41,5 @@
       NODE_ENV: production
     volumes:
       - /data
+  timeout: 300  # Increase the timeout value (in seconds)
+  become: true
