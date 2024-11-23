@@ -106,11 +106,14 @@
     state: present
     update_cache: yes
 
-- name: Add Docker's official GPG key
-  command: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+#- name: Add Docker's official GPG key
+#  command: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+
+- name: Add Docker GPG key
+  ansible.builtin.shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 
 - name: Set up the Docker repository
-  command: add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  ansible.builtin.shell: add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 
 - name: Update the apt package index
   apt:
