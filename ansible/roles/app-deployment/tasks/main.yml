@@ -18,7 +18,11 @@
 #     kubeconfig: "../../../kubeconfig"   
 #     state: present
 #     definition: "{{ lookup('file', 'service.yaml') }}"   
-
+- name: Install Docker SDK for Python using apt
+  apt:
+    name: python3-docker
+    state: present
+    
 - name: Stop existing Docker container
   community.docker.docker_container:
     name: reading-recommendations
