@@ -34,6 +34,28 @@
 # - name: Debug Docker version
 #   debug:
 #     var: docker_version_check.stdout
+- name: Remove old Docker versions
+  apt:
+    name:
+      - docker
+      - docker-engine
+      - docker.io
+      - containerd
+      - runc
+    state: absent
+    purge: yes
+
+- name: Remove Docker-related leftover files
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - /var/lib/docker
+    - /etc/docker
+    - /var/lib/containerd
+    - /run/docker
+    - /run/containerd
+    
 - name: Install Docker from Ubuntu repositories
   apt:
     name: docker.io
