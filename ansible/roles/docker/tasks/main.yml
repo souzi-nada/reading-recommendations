@@ -37,6 +37,7 @@
 # - name: Debug Docker version
 #   debug:
 #     var: docker_version_check.stdout
+
 # - name: Update apt repository
 #   apt:
 #     update_cache: yes
@@ -175,7 +176,7 @@
     append: true
 
 - name: Enable and start Docker services
-  ansible.builtin.systemd:
+  ansible.builtin.service:
     name: "{{ item }}"
     enabled: true
     state: started
