@@ -34,7 +34,7 @@ services:
   app-server:
     build:
       dockerfile: Dockerfile-webserver
-#    privileged: true 
+    privileged: true 
 #    user: root
     ports:
       - "8100:80"

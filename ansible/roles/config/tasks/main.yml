@@ -1,5 +1,18 @@
 ---
 # tasks file for config
+- name: Gather facts
+  setup:
+
+- name: Check if the OS is Ubuntu
+  debug:
+    msg: "This machine is running Ubuntu"
+  when: ansible_distribution == "Ubuntu"
+
+- name: Check if the OS is Debian
+  debug:
+    msg: "This machine is running Debian"
+  when: ansible_distribution == "Debian"
+
 - name: Update apt repository
   apt:
     update_cache: yes
