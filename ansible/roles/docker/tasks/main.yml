@@ -37,22 +37,41 @@
 # - name: Debug Docker version
 #   debug:
 #     var: docker_version_check.stdout
+---
+
+- name: Update apt package cache
+  apt:
+    update_cache: yes
 
 - name: Remove any existing Docker installation
   apt:
     name: docker-ce
     state: absent
-  ignore_errors: true
+  ignore_errors: true  # In case Docker is not installed, this will not cause an error
 
 - name: Remove old versions of Docker if installed
   apt:
     name: docker
     state: absent
-  ignore_errors: true
-  
-- name: Add Docker’s official GPG key
-  apt_key:
+  ignore_errors: true  # To remove any leftover Docker packages
+
+- name: Install required dependencies
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+    state: present
+
+- name: Download Docker’s official GPG key
+  get_url:
     url: https://download.docker.com/linux/ubuntu/gpg
+    dest: /tmp/docker_gpg.key
+
+- name: Add Docker’s GPG key
+  apt_key:
+    file: /tmp/docker_gpg.key
     state: present
 
 - name: Add Docker APT repository
