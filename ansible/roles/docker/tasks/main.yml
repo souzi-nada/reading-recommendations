@@ -182,6 +182,7 @@
   loop:
     - docker.service
     - containerd.service
+  become: true
 
 # - name: Install Docker
 #   apt:
