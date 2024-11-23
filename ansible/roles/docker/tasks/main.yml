@@ -70,18 +70,58 @@
 #       - python3-pip
 #     state: present
 #     update_cache: yes
+# - name: Install requests library using pip
+#   pip:
+#     name:
+#       - requests
+#       - beautifulsoup4
+#     state: present
 
-- name: Pull the Docker-in-Docker image
-  docker_image:
-    name: docker:dind
-    source: pull
-    pull: true
+# - name: Verify requests library installation
+#   command: python3 -c "import requests; print('requests is installed')"
+#   register: requests_check
+#   failed_when: "'requests is installed' not in requests_check.stdout"
+# - name: Pull the Docker-in-Docker image
+#   docker_image:
+#     name: docker:dind
+#     source: pull
+#     # pull: true
 
-- name: Run the Docker-in-Docker container
-  docker_container:
-    name: my_dind_container
-    image: docker:dind
-    privileged: yes
-    detach: yes
-    ports:
-      - "2375:2375"
+# - name: Run the Docker-in-Docker container
+#   docker_container:
+#     name: my_dind_container
+#     image: docker:dind
+#     privileged: yes
+#     detach: yes
+#     ports:
+#       - "2375:2375"
+
+- name: Update and install prerequisites
+  apt:
+    name: 
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+    state: present
+    update_cache: yes
+
+- name: Add Docker's official GPG key
+  command: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+
+- name: Set up the Docker repository
+  command: add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+- name: Update the apt package index
+  apt:
+    update_cache: yes
+
+- name: Install Docker
+  apt:
+    name: docker-ce
+    state: present
+
+- name: Ensure Docker service is running
+  service:
+    name: docker
+    state: started
