@@ -75,7 +75,7 @@
   docker_image:
     name: docker:dind
     source: pull
-    pull: yes
+    pull: true
 
 - name: Run the Docker-in-Docker container
   docker_container:
