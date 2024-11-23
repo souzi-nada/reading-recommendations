@@ -184,6 +184,16 @@
     - containerd.service
   become: true
 
+- name: Check Docker service status
+  ansible.builtin.systemd:
+    name: docker.service
+    state: started
+
+- name: Check containerd service status
+  ansible.builtin.systemd:
+    name: containerd.service
+    state: started
+
 # - name: Install Docker
 #   apt:
 #     name: docker-ce
