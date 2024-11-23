@@ -108,8 +108,8 @@
 
 #- name: Add Docker's official GPG key
 #  command: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-- name: Add Docker GPG key
-  ansible.builtin.shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+# - name: Add Docker GPG key
+#   ansible.builtin.shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 
 # - name: Set up the Docker repository
 #   command: add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
@@ -118,9 +118,24 @@
 #   ansible.builtin.debug:
 #     msg: "Architecture: {{ ansible_architecture }}, Codename: {{ ansible_lsb.codename }}"
 
+- name: Ensure Docker GPG keyring is installed
+  ansible.builtin.command:
+    cmd: >
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg |
+      gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  args:
+    creates: /etc/apt/keyrings/docker.gpg
+
+- name: Set permissions for Docker GPG keyring
+  ansible.builtin.file:
+    path: /etc/apt/keyrings/docker.gpg
+    owner: root
+    group: root
+    mode: '0644'
+
 - name: Add repository into sources list
   ansible.builtin.apt_repository:
-    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable
+    repo: deb [arch={{ ansible_architecture }}] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
     state: present
     filename: docker
 
