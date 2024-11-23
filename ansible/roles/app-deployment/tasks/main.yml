@@ -10,7 +10,7 @@
 
 - name: Deploy reading recommendations app
   kubernetes.core.k8s:
-    kubeconfig: "/kubeconfig"   
+    kubeconfig: "kubeconfig"   
     state: present
     definition: "{{ lookup('file', 'deployment.yaml') }}"
 - name: Expose Service
