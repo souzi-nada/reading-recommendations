@@ -37,7 +37,6 @@
 # - name: Debug Docker version
 #   debug:
 #     var: docker_version_check.stdout
----
 
 - name: Update apt package cache
   apt:
