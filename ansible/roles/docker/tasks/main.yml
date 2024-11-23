@@ -56,10 +56,10 @@
     mode: '0755'
 
 - name: Download Docker’s official GPG key
-  ansible.builtin.apt_key:
+  get_url:
     url: https://download.docker.com/linux/ubuntu/gpg
-    keyring: /etc/apt/keyrings/docker.gpg
-    state: present
+    dest: /etc/apt/keyrings/docker.gpg
+    mode: 0644
 
 - name: Add Docker APT repository
   ansible.builtin.apt_repository:
