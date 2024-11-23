@@ -49,7 +49,6 @@
     kubeconfig: "/kubeconfig"   
     state: present
     definition: "{{ lookup('file', 'deployment.yaml') }}"
-
 - name: Expose Service
   kubernetes.core.k8s:
     kubeconfig: "/kubeconfig"   
