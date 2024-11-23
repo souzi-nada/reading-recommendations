@@ -1,11 +1,12 @@
 ---
 # tasks file for app-deployment
 - name: Pull the latest Docker image
-  community.docker.docker_image:
-    name: "{{ docker_image }}"
-    tag: "{{ build_number }}"
-    source: pull
-    state: present
+  ansible.builtin.shell: "docker pull {{docker_image}}:{{build_number}}"
+  register: pull_result
+
+- name: Debug the output of docker pull
+  ansible.builtin.debug:
+    var: pull_result.stdout
 
 - name: Deploy reading recommendations app
   kubernetes.core.k8s:
