@@ -34,22 +34,22 @@
 # - name: Debug Docker version
 #   debug:
 #     var: docker_version_check.stdout
-- name: Add Docker GPG apt Key
-  apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
-    state: present
-
-- name: Add Docker Repository
-  apt_repository:
-    repo: deb https://download.docker.com/linux/ubuntu focal stable
-    state: present
-
-- name: Update apt and install docker-ce
+- name: Install Docker from Ubuntu repositories
   apt:
-    name: docker-ce
-    state: latest
-    update_cache: true
+    name: docker.io
+    state: present
+  become: true
 
-- name: Install Docker Module for Python
-  pip:
+- name: Ensure Docker service is enabled and running
+  service:
     name: docker
+    state: started
+    enabled: true
+  become: true
+
+- name: Add user to Docker group
+  user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: true
+  become: true
