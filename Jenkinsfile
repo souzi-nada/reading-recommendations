@@ -126,7 +126,7 @@ pipeline {
                                 'build_number': 'latest',
                             ]
                         )
-                        sshagent(credentials: ['deploy-dev']) {
+                        sshagent(credentials: ['jenkins_private_key']) {
                             sh 'ssh -o StrictHostKeyChecking=no jenkins@172.29.0.3'
                             sh 'docker ps -a --filter "name=reading-recommendations*" -q | xargs docker stop'
                             sh 'docker ps -a --filter "name=reading-recommendations*" -q | xargs docker rm'
