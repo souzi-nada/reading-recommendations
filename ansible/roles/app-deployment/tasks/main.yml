@@ -33,7 +33,7 @@
   community.docker.docker_container:
     name: reading-recommendations
     image: "{{ docker_image }}:{{ build_number }}"
-    state: started
+    state: present
     ports:
       - "{{ app_port }}:3000"
     restart_policy: always
