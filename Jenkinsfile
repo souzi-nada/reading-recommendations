@@ -128,8 +128,8 @@ pipeline {
                         )
                         sshagent(credentials: ['jenkins_private_key']) {
                             sh 'ssh -o StrictHostKeyChecking=no jenkins@172.29.0.3'
-                            sh 'docker ps -a --filter "name=reading-recommendations*" -q | xargs docker stop'
-                            sh 'docker ps -a --filter "name=reading-recommendations*" -q | xargs docker rm'
+                            sh 'docker ps -a --filter "name=reading-recommendations*" -q | xargs -r docker stop'
+                            sh 'docker ps -a --filter "name=reading-recommendations*" -q | xargs -r docker rm'
                             sh 'docker run -d --name reading-recommendations-app -p 3000:3000 ${DOCKER_REPO}:${BUILD_NUMBER}'
                         }
                     }
