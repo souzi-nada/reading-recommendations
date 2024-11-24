@@ -8,38 +8,8 @@
   ansible.builtin.debug:
     var: pull_result.stdout
 
-# - name: Deploy reading recommendations app
-#   kubernetes.core.k8s:
-#     kubeconfig: "/kubeconfig"   
-#     state: present
-#     definition: "{{ lookup('file', 'deployment.yaml') }}"
-# - name: Expose Service
-#   kubernetes.core.k8s:
-#     kubeconfig: "/kubeconfig"   
-#     state: present
-#     definition: "{{ lookup('file', 'service.yaml') }}"   
 - name: Install Docker SDK for Python using apt
   apt:
     name: python3-docker
     state: present
 
-- name: Stop and Remove old Docker container
-  community.docker.docker_container:
-    name: reading-recommendations
-    state: absent
-    # force_kill: yes
-
-- name: Run the new Docker container
-  community.docker.docker_container:
-    name: reading-recommendations
-    image: "{{ docker_image }}:{{ build_number }}"
-    state: present
-    ports:
-      - "{{ app_port }}:3000"
-    restart_policy: always
-    env:
-      NODE_ENV: production
-    volumes:
-      - /data
-  timeout: 300  # Increase the timeout value (in seconds)
-  become: true

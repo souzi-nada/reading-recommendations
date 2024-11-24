@@ -66,10 +66,10 @@ pipeline {
                 //         }
                 //         withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
                 //             sh 'echo $PASSWORD | docker login -u $USERNAME --password-stdin'
-                //             sh "docker build -t suzy90/reading-recommendations:${env.BUILD_NUMBER} ."
-                //             sh "docker tag suzy90/reading-recommendations:${env.BUILD_NUMBER} suzy90/reading-recommendations:latest"
-                //             sh "docker push suzy90/reading-recommendations:${env.BUILD_NUMBER}"
-                //             sh 'docker push suzy90/reading-recommendations:latest'
+                //             sh "docker build -t ${DOCKER_REPO}:${env.BUILD_NUMBER} ."
+                //             sh "docker tag ${DOCKER_REPO}:${env.BUILD_NUMBER} ${DOCKER_REPO}:latest"
+                //             sh "docker push ${DOCKER_REPO}:${env.BUILD_NUMBER}"
+                //             sh 'docker push ${DOCKER_REPO}:latest'
                 //         }
                 //     }
                 // }
@@ -109,7 +109,7 @@ pipeline {
                 //         }
                 //     }
                 // }
-                stage('Deploy App'){
+                stage('Deploy Phase') {
                     steps {
                         // timeout(activity: true, time: 10) {
                         //     slackSend channel: SLACK_CHANNEL, message: '@channel Kindly approve or decline the manual trigger'
@@ -126,6 +126,12 @@ pipeline {
                                 'build_number': 'latest',
                             ]
                         )
+                        sshagent(credentials: ['deploy-dev']) {
+                            sh 'ssh -o StrictHostKeyChecking=no jenkins@172.29.0.3'
+                            sh 'docker ps -a --filter "name=reading-recommendations*" -q | xargs docker stop'
+                            sh 'docker ps -a --filter "name=reading-recommendations*" -q | xargs docker rm'
+                            sh 'docker run -d --name reading-recommendations-app -p 3000:3000 ${DOCKER_REPO}:${BUILD_NUMBER}'
+                        }
                     }
                 }
             }
