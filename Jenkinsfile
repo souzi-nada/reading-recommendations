@@ -25,6 +25,7 @@ pipeline {
                     steps {
                         withCredentials([string(credentialsId: 'ENV_TESTING', variable: 'ENV_TESTING')]) {
                             writeFile file: '.env.testing', text: "${ENV_TESTING}\n"
+                            writeFile file: '.env.testing', text: "${ENV_TESTING}\n"
                         }
                         nodejs('node-18') {
                             cache(maxCacheSize: 250, defaultBranch: 'master', caches: [
@@ -43,20 +44,6 @@ pipeline {
                         sh 'npm test -- --onlyChanged'
                     }
                 }
-
-            // steps {
-            //     withCredentials([string(credentialsId: 'ENV_TESTING', variable: 'ENV_TESTING')]) {
-            //         writeFile file: '.env.testing', text: "${ENV_TESTING}\n"
-            //     }
-            //     nodejs('node-18') {
-            //         cache(maxCacheSize: 250, defaultBranch: 'master', caches: [
-            //             arbitraryFileCache(path: 'node_modules', cacheValidityDecidingFile: 'package-lock.json')
-            //         ]) {
-            //             sh 'npm install'
-            //         }
-            //     }
-            //     sh 'npm test'
-            // }
             }
         }
         stage('Build & Publish Docker Image') {
