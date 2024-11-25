@@ -62,14 +62,17 @@ pipeline{
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
                     // sh 'echo $PASSWORD | docker login -u $USERNAME --password-stdin'
                     retry(3) {
-                        sh 'echo $PASSWORD | docker login -u $USERNAME --password-stdin'
+                        sh '''
+                            echo "$PASSWORD" | docker login -u "$USERNAME" --password-stdin
+                        '''
                     }
-
-                    sh "docker build --cache-from=${DOCKER_REPO}:latest -t ${DOCKER_REPO}:${env.BUILD_NUMBER} ."
-                    sh "docker tag ${DOCKER_REPO}:${env.BUILD_NUMBER} ${DOCKER_REPO}:latest"
-                    sh "docker push ${DOCKER_REPO}:${env.BUILD_NUMBER}"
-                    sh "docker push ${DOCKER_REPO}:latest"
                 }
+                sh '''
+                    docker build --cache-from=${DOCKER_REPO}:latest -t ${DOCKER_REPO}:${env.BUILD_NUMBER} .
+                    docker tag ${DOCKER_REPO}:${env.BUILD_NUMBER} ${DOCKER_REPO}:latest
+                    docker push ${DOCKER_REPO}:${env.BUILD_NUMBER}
+                    docker push ${DOCKER_REPO}:latest
+                '''
             }
         }
         stage('Deploy') {
@@ -89,7 +92,7 @@ pipeline{
                 )
                 sshagent(credentials: ['jenkins_private_key']) {
                     sh '''
-                        ssh -o StrictHostKeyChecking=no jenkins@172.29.0.3 <<EOF
+                        ssh -o StrictHostKeyChecking=no jenkins@172.29.0.3 << 'EOF'
                         docker ps -a --filter "name=reading-recommendations*" -q | xargs -r docker stop
                         docker ps -a --filter "name=reading-recommendations*" -q | xargs -r docker rm
                         docker run -d --name reading-recommendations-app -p 3000:3000 ${DOCKER_REPO}:latest
