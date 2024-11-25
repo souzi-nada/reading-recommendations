@@ -16,7 +16,11 @@ pipeline{
         }
         stage('Checkout') {
             steps {
-                git credentialsId: GIT_CREDENTIALS, url: 'https://github.com/souzi-nada/reading-recommendations'
+                script {
+                    retry(3) {
+                        checkout scm
+                    }
+                }
             }
         }
         stage('Install & Test') {
