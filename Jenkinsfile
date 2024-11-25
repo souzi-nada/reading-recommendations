@@ -16,7 +16,9 @@ pipeline{
         }
         stage('Checkout') {
             steps {
-                git credentialsId: GIT_CREDENTIALS, url: 'https://github.com/souzi-nada/reading-recommendations'
+                retry(3){
+                    git credentialsId: GIT_CREDENTIALS, url: 'https://github.com/souzi-nada/reading-recommendations'
+                }
             }
         }
         stage('Install & Test') {
