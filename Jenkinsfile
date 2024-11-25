@@ -22,11 +22,36 @@ pipeline {
         stage('Install & Test') {
             parallel {
                 stage('Install Dependencies') {
+        stage('Initialize') {
+            steps {
+                slackSend channel: SLACK_CHANNEL, color: 'warning',
+                    message: "Build Started: ${env.JOB_NAME} [${env.BUILD_NUMBER}]\n(${env.BUILD_URL})",
+                    notifyCommitters: true, tokenCredentialId: SLACK_CREDENTIALS
+            }
+        }
+        stage('Checkout') {
+            steps {
+                git credentialsId: GIT_CREDENTIALS, url: 'https://github.com/souzi-nada/reading-recommendations'
+            }
+        }
+        stage('Install & Test') {
+            parallel {
+                stage('Install Dependencies') {
                     steps {
                         withCredentials([string(credentialsId: 'ENV_TESTING', variable: 'ENV_TESTING')]) {
                             writeFile file: '.env.testing', text: "${ENV_TESTING}\n"
                             writeFile file: '.env.testing', text: "${ENV_TESTING}\n"
                         }
+                        nodejs('node-18') {
+                            cache(maxCacheSize: 250, defaultBranch: 'master', caches: [
+                                arbitraryFileCache(path: 'node_modules', cacheValidityDecidingFile: 'package-lock.json')
+                            ]) {
+                                sh 'npm install'
+                            }
+                        }
+                    }
+                }
+                stage('Run Tests') {
                         nodejs('node-18') {
                             cache(maxCacheSize: 250, defaultBranch: 'master', caches: [
                                 arbitraryFileCache(path: 'node_modules', cacheValidityDecidingFile: 'package-lock.json')
@@ -98,8 +123,14 @@ pipeline {
             slackSend channel: SLACK_CHANNEL, color: 'good',
                 message: "Build Succeeded: ${env.JOB_NAME} [${env.BUILD_NUMBER}]\n(${env.BUILD_URL})",
                 notifyCommitters: true, tokenCredentialId: SLACK_CREDENTIALS
+            slackSend channel: SLACK_CHANNEL, color: 'good',
+                message: "Build Succeeded: ${env.JOB_NAME} [${env.BUILD_NUMBER}]\n(${env.BUILD_URL})",
+                notifyCommitters: true, tokenCredentialId: SLACK_CREDENTIALS
         }
         failure {
+            slackSend channel: SLACK_CHANNEL, color: 'danger',
+                message: "Build Failed: ${env.JOB_NAME} [${env.BUILD_NUMBER}]\n(${env.BUILD_URL})",
+                notifyCommitters: true, tokenCredentialId: SLACK_CREDENTIALS
             slackSend channel: SLACK_CHANNEL, color: 'danger',
                 message: "Build Failed: ${env.JOB_NAME} [${env.BUILD_NUMBER}]\n(${env.BUILD_URL})",
                 notifyCommitters: true, tokenCredentialId: SLACK_CREDENTIALS
