@@ -60,7 +60,11 @@ pipeline{
                     writeFile file: '.env.production', text: "${ENV_PROD}\n"
                 }
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                    sh 'echo $PASSWORD | docker login -u $USERNAME --password-stdin'
+                    // sh 'echo $PASSWORD | docker login -u $USERNAME --password-stdin'
+                    retry(3) {
+                        sh 'echo $PASSWORD | docker login -u $USERNAME --password-stdin'
+                    }
+
                     sh "docker build --cache-from=${DOCKER_REPO}:latest -t ${DOCKER_REPO}:${env.BUILD_NUMBER} ."
                     sh "docker tag ${DOCKER_REPO}:${env.BUILD_NUMBER} ${DOCKER_REPO}:latest"
                     sh "docker push ${DOCKER_REPO}:${env.BUILD_NUMBER}"
