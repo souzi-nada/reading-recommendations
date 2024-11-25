@@ -105,6 +105,18 @@ pipeline {
                 }
             }
         }
+
+        stage('Test Deployment') {
+            steps {
+                script {
+                    // Run health check using curl
+                    def result = sh(script: "curl -f https://d587409ef403c02993dae6f819823e44.serveo.net/api/v1/health", returnStatus: true)
+                    if (result != 0) {
+                        error("Health check failed! Application not running as expected.")
+                    }
+                }
+            }
+        }
     }
     post {
         success {
