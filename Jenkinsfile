@@ -23,7 +23,11 @@ pipeline {
                         script {
                             try {
                                 nodejs('node-18') {
-                                    sh 'npm install'
+                                    cache(maxCacheSize: 250, defaultBranch: 'master', caches: [
+                                            arbitraryFileCache(path: 'node_modules', cacheValidityDecidingFile: 'package-lock.json')
+                                    ]) {
+                                        sh 'npm install'
+                                    }
                                     sh 'npm test'
                                 }
                             } catch (Exception e) {
