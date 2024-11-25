@@ -1,4 +1,4 @@
-pipeline{
+pipeline {
     agent any
     environment {
         SLACK_CREDENTIALS = 'Slack-Integration'
@@ -17,7 +17,7 @@ pipeline{
         stage('Checkout') {
             steps {
                 script {
-                    retry(3) {
+                    retry(3){
                         checkout scm
                     }
                 }
