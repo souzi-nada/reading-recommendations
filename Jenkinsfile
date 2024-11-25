@@ -1,4 +1,4 @@
-pipeline{
+pipeline {
     agent any
     environment {
         SLACK_CREDENTIALS = 'Slack-Integration'
@@ -17,7 +17,7 @@ pipeline{
         stage('Checkout') {
             steps {
                 script {
-                    retry(3) {
+                    retry(3){
                         checkout scm
                     }
                 }
@@ -72,9 +72,10 @@ pipeline{
                     }
                 }
                 sh '''
-                    docker build --cache-from=${DOCKER_REPO}:latest -t ${DOCKER_REPO}:${env.BUILD_NUMBER} .
-                    docker tag ${DOCKER_REPO}:${env.BUILD_NUMBER} ${DOCKER_REPO}:latest
-                    docker push ${DOCKER_REPO}:${env.BUILD_NUMBER}
+                    #!/bin/bash
+                    docker build --cache-from=${DOCKER_REPO}:latest -t ${DOCKER_REPO}:${BUILD_NUMBER} .
+                    docker tag ${DOCKER_REPO}:${BUILD_NUMBER} ${DOCKER_REPO}:latest
+                    docker push ${DOCKER_REPO}:${BUILD_NUMBER}
                     docker push ${DOCKER_REPO}:latest
                 '''
             }
