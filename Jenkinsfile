@@ -1,4 +1,4 @@
-pipeline {
+pipeline{
     agent any
     environment {
         SLACK_CREDENTIALS = 'Slack-Integration'
@@ -41,7 +41,9 @@ pipeline {
                         withCredentials([string(credentialsId: 'ENV_TESTING', variable: 'ENV_TESTING')]) {
                             writeFile file: '.env.testing', text: "${ENV_TESTING}\n"
                         }
-                        sh 'npm test -- --onlyChanged'
+                        nodejs('node-18') {
+                            sh 'npm test -- --onlyChanged'
+                        }
                     }
                 }
             }
