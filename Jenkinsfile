@@ -29,7 +29,6 @@ pipeline {
                     steps {
                         withCredentials([string(credentialsId: 'ENV_TESTING', variable: 'ENV_TESTING')]) {
                             writeFile file: '.env.testing', text: "${ENV_TESTING}\n"
-                            writeFile file: '.env.testing', text: "${ENV_TESTING}\n"
                         }
                         nodejs('node-18') {
                             cache(maxCacheSize: 250, defaultBranch: 'master', caches: [
